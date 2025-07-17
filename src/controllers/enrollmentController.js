@@ -1,29 +1,25 @@
-/**
- * @desc    Enroll the logged-in student in a course
- * @route   POST /api/enrollments/
- * @access  Private (Student)
- */
-const enrollInCourse = async (req, res) => {
-    res.json({ 
-        message: "Student enrollment endpoint hit!",
-        studentId: req.user.id, // Logged-in user from protect middleware
-        courseId: req.body.courseId // From the request body
-    });
-};
+const express = require('express');
+const router = express.Router();
 
-/**
- * @desc    Get all students enrolled in a specific course
- * @route   GET /api/enrollments/course/:courseId
- * @access  Private (Admin, Faculty)
- */
-const getCourseEnrollments = async (req, res) => {
-    res.json({
-        message: "Get course enrollments endpoint hit!",
-        courseId: req.params.courseId
-    });
-};
+const { 
+    enrollInCourse, 
+    getCourseEnrollments,
+    getMyEnrollments // Import the new function
+} = require('../controllers/enrollmentController');
 
-module.exports = {
-    enrollInCourse,
-    getCourseEnrollments
-};
+const { protect, authorize } = require('../middleware/authMiddleware');
+
+// @route   POST /api/enrollments
+// @desc    A logged-in student can enroll themselves in a course
+router.post('/', protect, authorize('student'), enrollInCourse);
+
+// @route   GET /api/enrollments/my-courses
+// @desc    A logged-in student can see their own list of courses
+router.get('/my-courses', protect, authorize('student'), getMyEnrollments);
+
+// @route   GET /api/enrollments/course/:courseId
+// @desc    An admin or faculty member can see all students in a course
+router.get('/course/:courseId', protect, authorize('admin', 'faculty'), getCourseEnrollments);
+
+
+module.exports = router;
