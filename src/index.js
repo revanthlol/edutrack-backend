@@ -4,6 +4,9 @@ require('dotenv').config();
 // Import the Express library
 const express = require('express');
 
+// Initialize DB connection
+require('./config/db');
+
 // Initialize the Express application
 const app = express();
 
