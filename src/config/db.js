@@ -1,8 +1,7 @@
 // Import the mysql2 library
 const mysql = require('mysql2');
 
-// Import database credentials from the .env file
-require('dotenv').config();
+// We no longer need dotenv here as it's loaded first in index.js
 
 // Create a connection pool, which is more efficient than a single connection
 const pool = mysql.createPool({
@@ -36,5 +35,4 @@ pool.getConnection((err, connection) => {
 });
 
 // Export the pool with promise support for use in other parts of the application
-// Using promises allows us to use async/await syntax for cleaner code
 module.exports = pool.promise();
